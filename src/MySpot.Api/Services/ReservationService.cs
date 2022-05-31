@@ -1,6 +1,8 @@
 ﻿using MySpot.Api.Commands;
 using MySpot.Api.DTO;
 using MySpot.Api.Entities;
+using MySpot.Api.Exceptions;
+using MySpot.Api.ValueObjects;
 
 namespace MySpot.Api.Services
 {
@@ -8,11 +10,11 @@ namespace MySpot.Api.Services
     {
         private static WeeklyParkingSpot[] _weeklyParkingSpots = new[]
         {
-            new WeeklyParkingSpot(id: Guid.NewGuid(), DateTime.UtcNow.AddDays(-5), DateTime.UtcNow.AddDays(2), "P1"),
-            new WeeklyParkingSpot(id: Guid.NewGuid(), DateTime.UtcNow.AddDays(-5), DateTime.UtcNow.AddDays(2), "P2"),
-            new WeeklyParkingSpot(id: Guid.NewGuid(), DateTime.UtcNow.AddDays(-5), DateTime.UtcNow.AddDays(2), "P3"),
-            new WeeklyParkingSpot(id: Guid.NewGuid(), DateTime.UtcNow.AddDays(-5), DateTime.UtcNow.AddDays(2), "P4"),
-            new WeeklyParkingSpot(id: Guid.NewGuid(), DateTime.UtcNow.AddDays(-5), DateTime.UtcNow.AddDays(2), "P5"),
+            new WeeklyParkingSpot(id: Guid.NewGuid(), new Week(CurrentDate()), "P1"),
+            new WeeklyParkingSpot(id: Guid.NewGuid(), new Week(CurrentDate()), "P2"),
+            new WeeklyParkingSpot(id: Guid.NewGuid(), new Week(CurrentDate()), "P3"),
+            new WeeklyParkingSpot(id: Guid.NewGuid(), new Week(CurrentDate()), "P4"),
+            new WeeklyParkingSpot(id: Guid.NewGuid(), new Week(CurrentDate()), "P5"),
         };
 
 
@@ -22,47 +24,62 @@ namespace MySpot.Api.Services
             {
                 Id = x.Id,
                 EmployeeName = x.EmployeeName,
-                Date = x.Date.Date
+                Date = x.Date.Value.Date
             });
 
         public ReservationDto Get(Guid id) => GetAllWeekly().SingleOrDefault(x => x.Id == id);
 
         public Guid? Create(CreateReservation command)
         {
-            var (parkingSpotId, reservationId, emplyeeName, licencePlate, date) = command;
+            try
+            {
+                var (parkingSpotId, reservationId, emplyeeName, licencePlate, date) = command;
 
-            var weeklyParkingSpot = _weeklyParkingSpots.SingleOrDefault(x => x.Id == parkingSpotId);
+                var weeklyParkingSpot = _weeklyParkingSpots.SingleOrDefault(x => x.Id.Value == parkingSpotId);
 
-            if (weeklyParkingSpot is null)
+                if (weeklyParkingSpot is null)
+                {
+                    return default;
+                }
+
+                var reservation = new Reservation(reservationId, emplyeeName, licencePlate, new Date(date));
+
+                weeklyParkingSpot.AddReservation(reservation, new Date(CurrentDate()));
+
+                return reservation.Id;
+
+            }
+            catch (CustomException e)
             {
                 return default;
             }
-
-            var reservation = new Reservation(reservationId, emplyeeName, licencePlate, date);
-
-            weeklyParkingSpot.AddReservation(reservation);
-
-            return reservation.Id;
         }
 
         public bool Update(ChangeReservationLicencePlate command)
         {
-            var weeklyParkingSpot = GetWeeklyParkingSpotByReservation(command.ReservationId);
-
-            if (weeklyParkingSpot is null)
+            try
             {
-                return false;
+                var weeklyParkingSpot = GetWeeklyParkingSpotByReservation(command.ReservationId);
+
+                if (weeklyParkingSpot is null)
+                {
+                    return false;
+                }
+
+                var reservation = weeklyParkingSpot.Reservations.SingleOrDefault(x => x.Id.Value == command.ReservationId);
+
+                if (reservation is null)
+                {
+                    return false;
+                }
+
+                reservation.ChangeLicensePlate(command.LicencePlate);
+                return true;
             }
-
-            var reservation = weeklyParkingSpot.Reservations.SingleOrDefault(x => x.Id == command.ReservationId);
-
-            if (reservation is null)
+            catch (Exception e)
             {
-                return false;
+                return default;
             }
-
-            reservation.ChangeLicensePlate(command.LicencePlate);
-            return true;
         }
 
         public bool Delete(DeleteReservation command)
@@ -79,6 +96,8 @@ namespace MySpot.Api.Services
         }
 
         private WeeklyParkingSpot GetWeeklyParkingSpotByReservation(Guid id) =>
-            _weeklyParkingSpots.SingleOrDefault(x => x.Reservations.Any(r => r.Id == id));
+            _weeklyParkingSpots.SingleOrDefault(x => x.Reservations.Any(r => r.Id.Value == id));
+
+        private static DateTime CurrentDate() => new Clock().Current;
     }
 }

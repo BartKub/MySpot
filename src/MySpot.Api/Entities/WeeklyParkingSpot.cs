@@ -1,46 +1,45 @@
 ﻿using MySpot.Api.Exceptions;
+using MySpot.Api.ValueObjects;
 
 namespace MySpot.Api.Entities
 {
     public class WeeklyParkingSpot
     {
-        public Guid Id { get;}
-        public DateTime From { get; private set; }
-        public DateTime To { get; private set; }
-        public string Name { get; private set; }
+        public ParkingSpotId Id { get;}
+        public Week Week { get; private set; }
+        public ParkingSpotName Name { get; private set; }
         public IEnumerable<Reservation> Reservations => _reservationses;
 
         private readonly HashSet<Reservation> _reservationses = new();
 
-        public WeeklyParkingSpot(Guid id, DateTime @from, DateTime to, string name)
+        public WeeklyParkingSpot(ParkingSpotId id, Week week, ParkingSpotName name)
         {
             Id = id;
-            From = @from;
-            To = to;
+            Week = week;
             Name = name;
         }
 
-        public void AddReservation(Reservation reservation)
+        public void AddReservation(Reservation reservation, Date now)
         {
-            var isInvalidDate = reservation.Date.Date < From || 
-                                reservation.Date > To ||
-                                reservation.Date.Date < DateTime.UtcNow.Date;
+            var isInvalidDate = reservation.Date < Week.From || 
+                                reservation.Date > Week.To ||
+                                reservation.Date < now;
 
             if (isInvalidDate)
             {
-                throw new InvalidReservationDateException(reservation.Date.Date);
+                throw new InvalidReservationDateException(reservation.Date.Value.Date);
             }
 
-            var alreadyReserved = _reservationses.Any(x => x.Date == reservation.Date.Date);
+            var alreadyReserved = _reservationses.Any(x => x.Date == reservation.Date);
 
             if (alreadyReserved)
             {
-                throw new ParkingSpotAlreadyReservedException(reservation.Date.Date, Name);
+                throw new ParkingSpotAlreadyReservedException(reservation.Date.Value.Date, Name);
             }
 
             _reservationses.Add(reservation);
         }
 
-        public void RemoveReservation(Guid id) => _reservationses.RemoveWhere(x => x.Id == id);
+        public void RemoveReservation(ReservationId id) => _reservationses.RemoveWhere(x => x.Id == id);
     }
 }
