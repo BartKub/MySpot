@@ -13,4 +13,8 @@
     <Folder Include="Models\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\MySpot.Infrastructure\MySpot.Infrastructure.csproj" />
+  </ItemGroup>
+
 </Project>

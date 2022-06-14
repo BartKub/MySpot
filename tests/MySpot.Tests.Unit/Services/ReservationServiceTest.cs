@@ -1,6 +1,6 @@
 ﻿using System;
-using MySpot.Api.Commands;
-using MySpot.Api.Services;
+using MySpot.Application.Commands;
+using MySpot.Application.Services;
 using Shouldly;
 using Xunit;
 
