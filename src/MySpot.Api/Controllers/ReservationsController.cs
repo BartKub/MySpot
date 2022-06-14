@@ -9,15 +9,20 @@ namespace MySpot.Api.Controllers
     [Route("reservations")]
     public class ReservationsController: ControllerBase
     {
-        private readonly ReservationService _service = new();
+        private readonly IReservationService _reservationService;
+
+        public ReservationsController(IReservationService reservationService)
+        {
+            _reservationService = reservationService;
+        }
 
         [HttpGet]
-        public ActionResult<ReservationDto[]> Get() => Ok(_service.GetAllWeekly());
+        public ActionResult<ReservationDto[]> Get() => Ok(_reservationService.GetAllWeekly());
        
         [HttpGet("{id:guid}")]
         public ActionResult<ReservationDto> Get(Guid id)
         {
-            var reservation = _service.Get(id);
+            var reservation = _reservationService.Get(id);
 
             if (reservation is null)
             {
@@ -30,7 +35,7 @@ namespace MySpot.Api.Controllers
         [HttpPost]
         public ActionResult Post(CreateReservation command)
         {
-            var id = _service.Create(command with{ ReservationId = Guid.NewGuid() });
+            var id = _reservationService.Create(command with{ ReservationId = Guid.NewGuid() });
 
             if (id is null)
             {
@@ -43,7 +48,7 @@ namespace MySpot.Api.Controllers
         [HttpPut("{id:guid}")]
         public ActionResult Put(Guid id, ChangeReservationLicencePlate command)
         {
-            var isSucceeded = _service.Update(command with{ReservationId = id});
+            var isSucceeded = _reservationService.Update(command with{ReservationId = id});
 
             if (!isSucceeded)
             {
@@ -56,7 +61,7 @@ namespace MySpot.Api.Controllers
         [HttpDelete("{id:guid}")]
         public ActionResult Delete(Guid id)
         {
-            var isSucceeded = _service.Delete(new DeleteReservation(id));
+            var isSucceeded = _reservationService.Delete(new DeleteReservation(id));
 
             if (!isSucceeded)
             {

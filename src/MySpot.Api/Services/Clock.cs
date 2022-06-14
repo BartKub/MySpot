@@ -1,7 +1,8 @@
 ﻿namespace MySpot.Api.Services
 {
-    public sealed class Clock
+    public sealed class Clock: IClock
     {
-        public DateTime Current => DateTime.UtcNow;
+        public DateTime Current() => DateTime.UtcNow;
     }
+
 }
