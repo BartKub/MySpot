@@ -3,9 +3,9 @@ using MySpot.Core.Entities;
 using MySpot.Core.Repositories;
 using MySpot.Core.ValueObjects;
 
-namespace MySpot.Infrastructure.Repositories;
+namespace MySpot.Infrastructure.DAL.Repositories;
 
-internal sealed class InMemoryWeeklyParkingSpots: IWeeklyParkingSpotRepository
+internal sealed class InMemoryWeeklyParkingSpots : IWeeklyParkingSpotRepository
 {
     private readonly List<WeeklyParkingSpot> _weeklyParkingSpots;
 
