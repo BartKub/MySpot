@@ -46,6 +46,7 @@ namespace MySpot.Application.Services
 
                 weeklyParkingSpot.AddReservation(reservation, new Date(CurrentDate()));
 
+                _weeklyParkingSpotRepository.Add(weeklyParkingSpot);
                 return reservation.Id;
 
             }
@@ -74,6 +75,7 @@ namespace MySpot.Application.Services
                 }
 
                 reservation.ChangeLicensePlate(command.LicencePlate);
+                _weeklyParkingSpotRepository.Update(weeklyParkingSpot);
                 return true;
             }
             catch (Exception e)

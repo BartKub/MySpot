@@ -15,6 +15,10 @@ namespace MySpot.Infrastructure.DAL
                 
             services.AddDbContext<MySpotDbContext>(x=> x.UseNpgsql(connectionString));
             services.AddScoped<IWeeklyParkingSpotRepository, PostgresWeeklyParkingSpotRepository>();
+            services.AddHostedService<DatabaseInitializer>();
+
+            //EF core + npgsql issue
+            AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 
             return services;
         }
