@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using MySpot.Application.Commands;
 using MySpot.Application.Services;
 using Shouldly;
@@ -16,14 +17,14 @@ namespace MySpot.Tests.Unit.Services
         }
 
         [Fact]
-        public void given_valid_command_create_should_add_reservation()
+        public async Task given_valid_command_create_should_add_reservation()
         {
             //Arrange
             var id = Guid.NewGuid();
             var command = new CreateReservation(id, Guid.NewGuid(), "Joe Doe", "XYZ123", DateTime.UtcNow.AddDays(1));
            
             //Act
-            var reservationId = _reservationService.Create(command);
+            var reservationId = await _reservationService.CreateAsync(command);
 
             //Assert
             reservationId.ShouldNotBeNull();

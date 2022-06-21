@@ -17,12 +17,12 @@ namespace MySpot.Api.Controllers
         }
 
         [HttpGet]
-        public ActionResult<ReservationDto[]> Get() => Ok(_reservationService.GetAllWeekly());
+        public async Task<ActionResult<ReservationDto[]>> Get() => Ok(await _reservationService.GetAllWeeklyAsync());
        
         [HttpGet("{id:guid}")]
-        public ActionResult<ReservationDto> Get(Guid id)
+        public async Task<ActionResult<ReservationDto>> Get(Guid id)
         {
-            var reservation = _reservationService.Get(id);
+            var reservation = await _reservationService.GetAsync(id);
 
             if (reservation is null)
             {
@@ -33,9 +33,9 @@ namespace MySpot.Api.Controllers
         }
 
         [HttpPost]
-        public ActionResult Post(CreateReservation command)
+        public async Task<ActionResult> Post(CreateReservation command)
         {
-            var id = _reservationService.Create(command with{ ReservationId = Guid.NewGuid() });
+            var id = await _reservationService.CreateAsync(command with{ ReservationId = Guid.NewGuid() });
 
             if (id is null)
             {
@@ -46,9 +46,9 @@ namespace MySpot.Api.Controllers
         }
 
         [HttpPut("{id:guid}")]
-        public ActionResult Put(Guid id, ChangeReservationLicencePlate command)
+        public async Task<ActionResult> Put(Guid id, ChangeReservationLicencePlate command)
         {
-            var isSucceeded = _reservationService.Update(command with{ReservationId = id});
+            var isSucceeded = await _reservationService.UpdateAsync(command with{ReservationId = id});
 
             if (!isSucceeded)
             {
@@ -59,9 +59,9 @@ namespace MySpot.Api.Controllers
         }
 
         [HttpDelete("{id:guid}")]
-        public ActionResult Delete(Guid id)
+        public async Task<ActionResult> Delete(Guid id)
         {
-            var isSucceeded = _reservationService.Delete(new DeleteReservation(id));
+            var isSucceeded =  await _reservationService.DeleteAsync(new DeleteReservation(id));
 
             if (!isSucceeded)
             {
