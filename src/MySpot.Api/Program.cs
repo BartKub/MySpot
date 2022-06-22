@@ -7,11 +7,9 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services
     .AddApplication()
     .AddCore()
-    .AddInfrastructure(builder.Configuration)
-    .AddControllers();
+    .AddInfrastructure(builder.Configuration);
 
 var app = builder.Build();
-
-app.MapControllers();
+app.UseInfrastructure();
 
 app.Run();
