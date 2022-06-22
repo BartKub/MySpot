@@ -8,9 +8,9 @@ namespace MySpot.Core.Entities
         public ParkingSpotId Id { get;}
         public Week Week { get; private set; }
         public ParkingSpotName Name { get; private set; }
-        public IEnumerable<Reservation> Reservations => _reservationses;
+        public IEnumerable<Reservation> Reservations => _reservations;
 
-        private readonly HashSet<Reservation> _reservationses = new();
+        private readonly HashSet<Reservation> _reservations = new();
 
         public WeeklyParkingSpot(ParkingSpotId id, Week week, ParkingSpotName name)
         {
@@ -19,7 +19,7 @@ namespace MySpot.Core.Entities
             Name = name;
         }
 
-        public void AddReservation(Reservation reservation, Date now)
+        internal void AddReservation(Reservation reservation, Date now)
         {
             var isInvalidDate = reservation.Date < Week.From || 
                                 reservation.Date > Week.To ||
@@ -30,16 +30,16 @@ namespace MySpot.Core.Entities
                 throw new InvalidReservationDateException(reservation.Date.Value.Date);
             }
 
-            var alreadyReserved = _reservationses.Any(x => x.Date == reservation.Date);
+            var alreadyReserved = _reservations.Any(x => x.Date == reservation.Date);
 
             if (alreadyReserved)
             {
                 throw new ParkingSpotAlreadyReservedException(reservation.Date.Value.Date, Name);
             }
 
-            _reservationses.Add(reservation);
+            _reservations.Add(reservation);
         }
 
-        public void RemoveReservation(ReservationId id) => _reservationses.RemoveWhere(x => x.Id == id);
+        public void RemoveReservation(ReservationId id) => _reservations.RemoveWhere(x => x.Id == id);
     }
 }
