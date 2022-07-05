@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MySpot.Application.Abstractions;
 using MySpot.Application.Commands;
+using MySpot.Application.DTO;
+using MySpot.Application.Queries;
 
 namespace MySpot.Api.Controllers
 {
@@ -10,12 +12,18 @@ namespace MySpot.Api.Controllers
     {
         //Here we should create Dispatcher instead of injecting handlers
 
-        private readonly ICommandHandler<ReserveParkingSpotForVehicle> _commandHandler;
+        private readonly IQueryHandler<GetWeeklyParkingSpots, IEnumerable<WeeklyParkingSpotDto>>
+            _getWeeklyParkingSpotsHandler;
 
-        public ParkingSpotsController(ICommandHandler<ReserveParkingSpotForVehicle> commandHandler)
+        public ParkingSpotsController(
+            IQueryHandler<GetWeeklyParkingSpots, IEnumerable<WeeklyParkingSpotDto>> getWeeklyParkingSpotsHandler)
         {
-            _commandHandler = commandHandler;
+            _getWeeklyParkingSpotsHandler = getWeeklyParkingSpotsHandler;
         }
+
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<WeeklyParkingSpotDto>>> Get([FromQuery] GetWeeklyParkingSpots query)
+            => Ok(await _getWeeklyParkingSpotsHandler.HandleAsync(query));
 
     }
 }
