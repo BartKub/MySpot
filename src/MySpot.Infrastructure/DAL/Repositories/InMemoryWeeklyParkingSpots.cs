@@ -15,11 +15,11 @@ internal sealed class InMemoryWeeklyParkingSpots : IWeeklyParkingSpotRepository
         _weeklyParkingSpots = new List<WeeklyParkingSpot>
         {
 
-            new(Guid.NewGuid(), new Week(clock.Current()), "P1"),
-            new(id: Guid.NewGuid(), new Week(clock.Current()), "P2"),
-            new(id: Guid.NewGuid(), new Week(clock.Current()), "P3"),
-            new(id: Guid.NewGuid(), new Week(clock.Current()), "P4"),
-            new(id: Guid.NewGuid(), new Week(clock.Current()), "P5"),
+            WeeklyParkingSpot.Create(Guid.NewGuid(), new Week(clock.Current()), "P1"),
+            WeeklyParkingSpot.Create(id: Guid.NewGuid(), new Week(clock.Current()), "P2"),
+            WeeklyParkingSpot.Create(id: Guid.NewGuid(), new Week(clock.Current()), "P3"),
+            WeeklyParkingSpot.Create(id: Guid.NewGuid(), new Week(clock.Current()), "P4"),
+            WeeklyParkingSpot.Create(id: Guid.NewGuid(), new Week(clock.Current()), "P5"),
 
         };
     }

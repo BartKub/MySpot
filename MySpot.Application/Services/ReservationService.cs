@@ -47,7 +47,7 @@ namespace MySpot.Application.Services
 
         public async Task ReserveForVehicleAsync(ReserveParkingSpotForVehicle command)
         {
-            var (spotId, reservationId, emplyeeName, licencePlate, date) = command;
+            var (spotId, reservationId, emplyeeName, licencePlate, capacity, date) = command;
             var week = new Week(_clock.Current());
             var weeklyParkingSpots = (await _weeklyParkingSpotRepository.GetByWeekAsync(week)).ToList();
             var parkingSpotId = new ParkingSpotId(spotId);
@@ -58,7 +58,7 @@ namespace MySpot.Application.Services
                 throw new WeeklyParkingSpotNotFoundException(command.ReservationId);
             }
 
-            var reservation = new VehicleReservation(reservationId, emplyeeName, licencePlate, new Date(date));
+            var reservation = new VehicleReservation(reservationId, emplyeeName, licencePlate, new Date(date), capacity);
 
             _parkingReservationService.ReserveSpotForVehicle(weeklyParkingSpots, JobTitle.Employee, parkingSpotToReserve, reservation);
 

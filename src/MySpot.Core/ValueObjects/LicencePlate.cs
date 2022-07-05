@@ -1,27 +1,26 @@
 ﻿using MySpot.Core.Exceptions;
 
-namespace MySpot.Core.ValueObjects
+namespace MySpot.Core.ValueObjects;
+
+public record LicencePlate
 {
-    public record LicencePlate
+    public string Value { get; }
+
+    public LicencePlate(string value)
     {
-        public string Value { get; }
-
-        public LicencePlate(string value)
+        if (string.IsNullOrWhiteSpace(value))
         {
-            if (string.IsNullOrWhiteSpace(value))
-            {
-                throw new InvalidLicencePlateException(value);
-            }
-
-            if (value.Length is < 5 or > 8)
-            {
-                throw new InvalidLicencePlateException(value);
-            }
-
-            Value  = value;
+            throw new InvalidLicencePlateException(value);
         }
 
-        public static implicit operator string(LicencePlate licencePlate) => licencePlate.Value;
-        public static implicit operator LicencePlate(string value) => new(value);
+        if (value.Length is < 5 or > 8)
+        {
+            throw new InvalidLicencePlateException(value);
+        }
+
+        Value  = value;
     }
+
+    public static implicit operator string(LicencePlate licencePlate) => licencePlate.Value;
+    public static implicit operator LicencePlate(string value) => new(value);
 }

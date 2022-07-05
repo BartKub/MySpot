@@ -15,6 +15,9 @@ namespace MySpot.Infrastructure.DAL.Configurations
             builder.Property(x => x.Date)
                 .IsRequired()
                 .HasConversion(x => x.Value, x => new Date(x));
+            builder.Property(x => x.Capacity)
+                .IsRequired()
+                .HasConversion(x => x.Value, x => new Capacity(x));
 
             builder.HasDiscriminator<string>("Type")
                 .HasValue<CleaningReservation>(nameof(CleaningReservation))

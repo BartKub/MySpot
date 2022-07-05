@@ -6,11 +6,13 @@ namespace MySpot.Core.Entities
     {
         public ReservationId Id { get; }
         public Date Date { get; private set; }
+        public Capacity Capacity { get; private set; }
 
-        protected Reservation(ReservationId id, Date date)
+        protected Reservation(ReservationId id, Capacity capacity, Date date)
         {
             Id = id;
             Date = date;
+            Capacity = capacity;
         }
     }
 }
