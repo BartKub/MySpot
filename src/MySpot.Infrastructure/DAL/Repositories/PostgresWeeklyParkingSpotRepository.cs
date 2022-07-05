@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using MySpot.Core.Entities;
 using MySpot.Core.Repositories;
 using MySpot.Core.ValueObjects;
@@ -21,14 +16,16 @@ namespace MySpot.Infrastructure.DAL.Repositories
             _weeklyParkingSpots = _dbContext.WeeklyParkingSpots;
         }
 
-        public async Task<IEnumerable<WeeklyParkingSpot>> GetAllAsync() => _weeklyParkingSpots
+        public async Task<IEnumerable<WeeklyParkingSpot>> GetAllAsync() => 
+            await _weeklyParkingSpots
             .Include(x=>x.Reservations)
-            .ToList();
+            .ToListAsync();
 
-        public async Task <IEnumerable<WeeklyParkingSpot>> GetByWeekAsync(Week week) => _weeklyParkingSpots
+        public async Task <IEnumerable<WeeklyParkingSpot>> GetByWeekAsync(Week week) => 
+            await _weeklyParkingSpots
             .Include(x => x.Reservations)
             .Where(x => x.Week == week)
-            .ToList();
+            .ToListAsync();
 
         public async Task <WeeklyParkingSpot> GetAsync(ParkingSpotId id) 
         {

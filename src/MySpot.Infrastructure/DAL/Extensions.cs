@@ -1,10 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using MySpot.Application.Services;
 using MySpot.Core.Repositories;
 using MySpot.Infrastructure.DAL.Repositories;
-using MySpot.Infrastructure.Time;
 
 namespace MySpot.Infrastructure.DAL
 {

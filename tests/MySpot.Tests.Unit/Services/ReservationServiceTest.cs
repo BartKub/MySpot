@@ -1,8 +1,5 @@
-﻿using System;
-using System.Threading.Tasks;
-using MySpot.Application.Commands;
+﻿using System.Threading.Tasks;
 using MySpot.Application.Services;
-using Shouldly;
 using Xunit;
 
 namespace MySpot.Tests.Unit.Services
