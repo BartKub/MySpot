@@ -6,6 +6,7 @@ using MySpot.Application.Abstractions;
 using MySpot.Core.Abstractions;
 using MySpot.Infrastructure.DAL;
 using MySpot.Infrastructure.Exceptions;
+using MySpot.Infrastructure.Logging;
 using MySpot.Infrastructure.Time;
 
 [assembly: InternalsVisibleTo("MySpot.Tests.Unit")]
@@ -22,7 +23,7 @@ namespace MySpot.Infrastructure
                 .AddPostgres(config)
                 .AddSingleton<IClock, Clock>();
             //.AddSingleton<IWeeklyParkingSpotRepository, InMemoryWeeklyParkingSpots>();
-
+            services.AddCustomLogging();
             var infraAssembly = typeof(AppOptions).Assembly;
 
             services.Scan(s => s.FromAssemblies(infraAssembly)
