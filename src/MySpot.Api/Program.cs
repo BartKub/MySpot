@@ -12,7 +12,11 @@ builder.Services
 
 builder.Host.UseSerilog((context, loggerConfig) =>
 {
-    loggerConfig.WriteTo.Console().WriteTo.File("logs.txt");
+    loggerConfig
+        .WriteTo
+        .Console()
+        .WriteTo
+        .File("logs.txt");
 });
 
 var app = builder.Build();
