@@ -15,6 +15,7 @@ namespace MySpot.Infrastructure.Security
         public static IServiceCollection AddSecurity(this IServiceCollection services)
         {
             services.AddSingleton<IPasswordHasher<User>, PasswordHasher<User>>();
+            services.AddSingleton<ITokenStorage, HttpContextTokenStorage>();
             services.AddSingleton<IPasswordManager, PasswordManager>();
             return services;
         }

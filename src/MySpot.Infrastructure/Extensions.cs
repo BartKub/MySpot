@@ -4,6 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using MySpot.Application.Abstractions;
 using MySpot.Core.Abstractions;
+using MySpot.Infrastructure.Auth;
 using MySpot.Infrastructure.DAL;
 using MySpot.Infrastructure.Exceptions;
 using MySpot.Infrastructure.Logging;
@@ -20,6 +21,7 @@ namespace MySpot.Infrastructure
             services.AddControllers();
             services.Configure<AppOptions>(config.GetRequiredSection("app"));
             services.AddSingleton<ExceptionMiddleware>();
+            services.AddHttpContextAccessor();
             services
                 .AddPostgres(config)
                 .AddSingleton<IClock, Clock>();
@@ -33,13 +35,18 @@ namespace MySpot.Infrastructure
                 .AsImplementedInterfaces()
                 .WithScopedLifetime());
 
+            services.AddAuth(config);
+
             return services;
         }
 
         public static WebApplication UseInfrastructure(this WebApplication app)
         {
             app.UseMiddleware<ExceptionMiddleware>();
+            app.UseAuthentication();
+            app.UseAuthorization();
             app.MapControllers();
+
             return app;
         }
 
