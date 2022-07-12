@@ -5,6 +5,7 @@ using MySpot.Application.Commands;
 using MySpot.Application.DTO;
 using MySpot.Application.Queries;
 using MySpot.Application.Security;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace MySpot.Api.Controllers;
 
@@ -34,6 +35,9 @@ public class UsersController: ControllerBase
 
     [Authorize(Policy = "is-admin")]
     [HttpGet("{userId:guid}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [SwaggerOperation("Get list of all users")]
     public async Task<IActionResult> Get(Guid userId)
     {
         var user = await _getUserHandler.HandleAsync(new GetUser { UserId = userId });
@@ -71,6 +75,7 @@ public class UsersController: ControllerBase
 
     [Authorize(Policy = "is-admin")]
     [HttpGet]
+
     public async Task<IActionResult> Get() => Ok(await _getUsersHandler.HandleAsync(new GetUsers()));
 
     [HttpPost]
