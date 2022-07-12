@@ -18,24 +18,21 @@ public class UsersController: ControllerBase
     private readonly IQueryHandler<GetUser, UserDto> _getUserHandler;
     private readonly ITokenStorage _tokenStorage;
 
-    private readonly IAuthenticator _authenticator;
-
-
     public UsersController(ICommandHandler<SignUp> signUpCommandHandler,
         IQueryHandler<GetUsers, IEnumerable<UserDto>> getUsersHandler,
         IQueryHandler<GetUser, UserDto> getUserHandler, 
-        IAuthenticator authenticator, 
         ICommandHandler<SignIn> signInCommandHandler, 
         ITokenStorage tokenStorage)
     {
         _signUpCommandHandler = signUpCommandHandler;
         _getUsersHandler = getUsersHandler;
         _getUserHandler = getUserHandler;
-        _authenticator = authenticator;
         _signInCommandHandler = signInCommandHandler;
         _tokenStorage = tokenStorage;
     }
 
+
+    [Authorize(Policy = "is-admin")]
     [HttpGet("{userId:guid}")]
     public async Task<IActionResult> Get(Guid userId)
     {
@@ -58,6 +55,9 @@ public class UsersController: ControllerBase
             return NotFound();
         }
 
+        var isInUserRole = User.IsInRole("user");
+        var isInAdminRole = User.IsInRole("admin");
+
         var userId = Guid.Parse(User.Identity?.Name);
         var user = await _getUserHandler.HandleAsync(new GetUser { UserId = userId });
 
@@ -69,6 +69,7 @@ public class UsersController: ControllerBase
         return Ok(user);
     }
 
+    [Authorize(Policy = "is-admin")]
     [HttpGet]
     public async Task<IActionResult> Get() => Ok(await _getUsersHandler.HandleAsync(new GetUsers()));
 
@@ -85,12 +86,5 @@ public class UsersController: ControllerBase
         await _signInCommandHandler.HandleAsync(command);
         var jwt = _tokenStorage.Get();
         return Ok(jwt);
-    }
-
-    [HttpGet("jwt")]
-    public ActionResult<JwtDto> GetJwt()
-    {
-        var jwt = _authenticator.CreateToken(Guid.NewGuid());
-        return jwt;
     }
 }

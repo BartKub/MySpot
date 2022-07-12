@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -37,6 +33,15 @@ namespace MySpot.Infrastructure.Auth
                         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(options.SigningKey)) // key to validate against
                     };
                 });
+
+            services.AddAuthorization(auth =>
+            {
+                auth.AddPolicy("is-admin", policy =>
+                {
+                    policy.RequireRole("admin");
+                    //policy.RequireClaim("permission", "get-users") from cstom claim
+                });
+            });
 
             return services;
         }
