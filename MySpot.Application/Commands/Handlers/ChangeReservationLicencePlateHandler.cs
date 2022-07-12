@@ -13,19 +13,21 @@ namespace MySpot.Application.Commands.Handlers
         private readonly IWeeklyParkingSpotRepository _parkingSpotRepository;
         private readonly IParkingReservationService _parkingReservationService;
         private readonly IClock _clock;
+        private readonly IUserRepository _userRepository;
 
         public ReserveParkingSpotForVehicleHandler(IWeeklyParkingSpotRepository parkingSpotRepository, 
             IParkingReservationService parkingReservationService, 
-            IClock clock)
+            IClock clock, IUserRepository userRepository)
         {
             _parkingSpotRepository = parkingSpotRepository;
             _parkingReservationService = parkingReservationService;
             _clock = clock;
+            _userRepository = userRepository;
         }
 
         public async Task HandleAsync(ReserveParkingSpotForVehicle command)
         {
-            var (spotId, reservationId, emplyeeName, licencePlate, capacity, date) = command;
+            var (spotId, reservationId, userId, licencePlate, capacity, date) = command;
             var week = new Week(_clock.Current());
             var weeklyParkingSpots = (await _parkingSpotRepository.GetByWeekAsync(week)).ToList();
             var parkingSpotId = new ParkingSpotId(spotId);
@@ -36,7 +38,14 @@ namespace MySpot.Application.Commands.Handlers
                 throw new WeeklyParkingSpotNotFoundException(command.ReservationId);
             }
 
-            var reservation = new VehicleReservation(reservationId, emplyeeName, licencePlate, new Date(date), capacity);
+            var user = await _userRepository.GetByIdAsync(userId);
+
+            if (user is null)
+            {
+                throw new UserNotFoundException(userId);
+            }
+
+            var reservation = new VehicleReservation(reservationId,new EmployeeName(user.FullName), licencePlate, new Date(date), capacity, user.Id);
 
             _parkingReservationService.ReserveSpotForVehicle(weeklyParkingSpots, JobTitle.Employee, parkingSpotToReserve, reservation);
 

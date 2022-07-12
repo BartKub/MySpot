@@ -19,6 +19,7 @@ namespace MySpot.Infrastructure.DAL
             var postgresOptions = config.GetOptions<PostgresOptions>(OptionsSectionName);
             services.AddDbContext<MySpotDbContext>(x=> x.UseNpgsql(postgresOptions.ConnectionString));
             services.AddScoped<IWeeklyParkingSpotRepository, PostgresWeeklyParkingSpotRepository>();
+            services.AddScoped<IUserRepository, PostgresUserRepository>();
             services.AddHostedService<DatabaseInitializer>();
             services.AddScoped<IUnitOfWork, PostgresUnitOfWork>();
 

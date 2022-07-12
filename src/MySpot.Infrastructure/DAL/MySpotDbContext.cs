@@ -7,6 +7,7 @@ namespace MySpot.Infrastructure.DAL
     {
         public DbSet<Reservation> Reservations { get; set; }
         public DbSet<WeeklyParkingSpot> WeeklyParkingSpots { get; set; }
+        public DbSet<User> Users { get; set; }
 
         public MySpotDbContext(DbContextOptions<MySpotDbContext> options): base(options)
         {

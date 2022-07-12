@@ -1,0 +1,1 @@
+2022-07-12 11:19:42.884 +02:00 [INF] Entity Framework Core 6.0.6 initialized 'MySpotDbContext' using provider 'Npgsql.EntityFrameworkCore.PostgreSQL:6.0.4+6cb649128e3e7aa8eddd77dfa75b34bad51e6e94' with options: None

@@ -4,15 +4,20 @@ namespace MySpot.Core.Entities;
 
 public class VehicleReservation : Reservation
 {
+    public UserId UserId { get; }
     public EmployeeName EmployeeName { get; private set; }
     public LicencePlate LicensePlate { get; private set; }
-    public Capacity Capacity { get; private set; }
 
-    public VehicleReservation(ReservationId id, EmployeeName employeeName, LicencePlate licensePlate, Date date, Capacity capacity): base(id, capacity, date)
+    private VehicleReservation()
+    {
+    }
+
+    public VehicleReservation(ReservationId id, EmployeeName employeeName, LicencePlate licensePlate, Date date, Capacity capacity, UserId userId): 
+        base(id, capacity, date)
     {
         EmployeeName = employeeName;
         LicensePlate = licensePlate;
-        Capacity = capacity;
+        UserId = userId;
     }
 
     public void ChangeLicensePlate( LicencePlate licensePlate)
