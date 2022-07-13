@@ -12,6 +12,7 @@ using MySpot.Infrastructure.Time;
 
 namespace MySpot.Tests.Integration.Controllers;
 
+[Collection("api")]// to run tests one by one
 public  abstract class ControllerTests: IClassFixture<OptionsProvider>
 {
     private readonly IAuthenticator _authenticator;
